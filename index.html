@@ -101,3 +101,39 @@
       const out = document.getElementById("out");
       msg.textContent = "";
       out.style.display = "none";
+      try {
+        const params = {
+          metaMensal: Number(document.getElementById("meta").value),
+          valorPorJogo: Number(document.getElementById("valorPorJogo").value),
+          custosFixos: Number(document.getElementById("custosFixos").value || 0),
+          custoPorJogo: Number(document.getElementById("custoPorJogo").value || 0),
+          semanasNoMes: Number(document.getElementById("semanasNoMes").value || 4.345),
+          diasPorSemana: Number(document.getElementById("diasPorSemana").value || 6),
+        };
+
+        if (!Number.isFinite(params.metaMensal) || !Number.isFinite(params.valorPorJogo)) {
+          throw new Error("Preencha pelo menos a Meta mensal e o Valor por jogo.");
+        }
+
+        const r = calcular(params);
+
+        out.innerHTML = `
+          <div><b>Lucro por jogo:</b> ${moedaBR(r.lucroPorJogo)}</div>
+          <div><b>Jogos necessários no mês:</b> ${r.jogosNecessarios}</div>
+          <hr/>
+          <div><b>Média por semana:</b> ${r.mediaPorSemana.toFixed(2)} jogos/semana</div>
+          <div><b>Média por dia (com seus dias/semana):</b> ${r.mediaPorDia.toFixed(2)} jogos/dia</div>
+          <hr/>
+          <div><b>Receita bruta estimada:</b> ${moedaBR(r.receitaBruta)}</div>
+          <div><b>Custos variáveis estimados:</b> ${moedaBR(r.custoVariavel)}</div>
+          <div><b>Custos fixos:</b> ${moedaBR(Number(params.custosFixos))}</div>
+          <div><b>Receita líquida estimada:</b> ${moedaBR(r.receitaLiquidaEstimada)}</div>
+        `;
+        out.style.display = "block";
+      } catch (e) {
+        msg.textContent = e.message || String(e);
+      }
+    });
+  </script>
+</body>
+</html>
