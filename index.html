@@ -1,123 +1,207 @@
 <!doctype html>
 <html lang="pt-br">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Calculadora de Jogos (Meta Mensal)</title>
-  <style>
-    body { font-family: system-ui, Arial, sans-serif; margin: 24px; max-width: 720px; }
-    label { display:block; margin-top: 12px; }
-    input { width: 100%; padding: 10px; margin-top: 6px; }
-    button { margin-top: 16px; padding: 10px 14px; cursor: pointer; }
-    .box { margin-top: 16px; padding: 14px; border: 1px solid #ddd; border-radius: 10px; }
-    .muted { color:#555; font-size: 0.95rem; }
-    .error { color: #b00020; margin-top: 10px; }
-  </style>
-</head>
-<body>
-  <h1>Meta mensal → jogos necessários</h1>
-  <p class="muted">Preencha os valores e clique em calcular.</p>
-
-  <label>
-    Meta mensal (R$)
-    <input id="meta" type="number" step="0.01" min="0" placeholder="Ex.: 3000" />
-  </label>
-
-<label>
-    Valor recebido por jogo (R$)
-    <input id="valorPorJogo" type="number" step="0.01" min="0" placeholder="Ex.: 23.99" />
-  </label>
-
-  <label>
-    Custos fixos do mês (R$) — opcional
-    <input id="custosFixos" type="number" step="0.01" min="0" value="0" />
-  </label>
-
-  <label>
-    Custo por jogo (R$) — opcional (combustível, taxa, etc.)
-    <input id="custoPorJogo" type="number" step="0.01" min="0" value="0" />
-  </label>
-
-  <label>
-    Semanas no mês — opcional
-    <input id="semanasNoMes" type="number" step="0.001" min="1" value="4.345" />
-  </label>
-
-  <label>
-    Dias trabalhados por semana — opcional
-    <input id="diasPorSemana" type="number" step="1" min="1" max="7" value="6" />
-  </label>
-  <button id="btn">Calcular</button>
-
-  <div id="msg" class="error"></div>
-
-  <div id="out" class="box" style="display:none;"></div>
-
-  <script>
-    function moedaBR(valor) {
-      return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-    }
-
-    function calcular({ metaMensal, valorPorJogo, custosFixos, custoPorJogo, semanasNoMes, diasPorSemana }) {
-      const lucroPorJogo = valorPorJogo - custoPorJogo;
-
-      if (metaMensal < 0 || valorPorJogo < 0 || custosFixos < 0 || custoPorJogo < 0) {
-        throw new Error("Nenhum valor pode ser negativo.");
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Calculadora de Jogos (Meta Mensal)</title>
+    <style>
+      body {
+        font-family: system-ui, Arial, sans-serif;
+        margin: 24px;
+        max-width: 720px;
       }
-      if (lucroPorJogo <= 0) {
-        throw new Error("O lucro por jogo precisa ser maior que zero (valor por jogo > custo por jogo).");
+      label {
+        display: block;
+        margin-top: 12px;
       }
-      if (semanasNoMes <= 0) {
-        throw new Error("Semanas no mês precisa ser maior que zero.");
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 6px;
       }
-      if (diasPorSemana <= 0 || diasPorSemana > 7) {
-        throw new Error("Dias por semana precisa estar entre 1 e 7.");
+      button {
+        margin-top: 16px;
+        padding: 10px 14px;
+        cursor: pointer;
       }
-  // Jogos necessários para atingir a meta considerando custos fixos
-      const jogosNecessarios = Math.ceil((metaMensal + custosFixos) / lucroPorJogo);
+      .box {
+        margin-top: 16px;
+        padding: 14px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+      }
+      .muted {
+        color: #555;
+        font-size: 0.95rem;
+      }
+      .error {
+        color: #b00020;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Meta mensal → jogos necessários</h1>
+    <p class="muted">Preencha os valores e clique em calcular.</p>
 
-      // Médias
-      const mediaPorSemana = jogosNecessarios / semanasNoMes;
-      const mediaPorDia = mediaPorSemana / diasPorSemana;
+    <label>
+      Meta mensal (R$)
+      <input
+        id="meta"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Ex.: 3000"
+      />
+    </label>
 
-      // Checagens extras (informativas)
-      const receitaBruta = jogosNecessarios * valorPorJogo;
-      const custoVariavel = jogosNecessarios * custoPorJogo;
-      const receitaLiquidaEstimada = receitaBruta - custoVariavel - custosFixos;
+    <label>
+      Valor recebido por jogo (R$)
+      <input
+        id="valorPorJogo"
+        type="number"
+        step="0.01"
+        min="0"
+        placeholder="Ex.: 23.99"
+      />
+    </label>
 
-      return {
-        lucroPorJogo,
-        jogosNecessarios,
-        mediaPorSemana,
-        mediaPorDia,
-        receitaBruta,
-        custoVariavel,
-        receitaLiquidaEstimada
-      };
-    }
+    <label>
+      Custos fixos do mês (R$) — opcional
+      <input id="custosFixos" type="number" step="0.01" min="0" value="0" />
+    </label>
 
-    document.getElementById("btn").addEventListener("click", () => {
-      const msg = document.getElementById("msg");
-      const out = document.getElementById("out");
-      msg.textContent = "";
-      out.style.display = "none";
-      try {
-        const params = {
-          metaMensal: Number(document.getElementById("meta").value),
-          valorPorJogo: Number(document.getElementById("valorPorJogo").value),
-          custosFixos: Number(document.getElementById("custosFixos").value || 0),
-          custoPorJogo: Number(document.getElementById("custoPorJogo").value || 0),
-          semanasNoMes: Number(document.getElementById("semanasNoMes").value || 4.345),
-          diasPorSemana: Number(document.getElementById("diasPorSemana").value || 6),
-        };
+    <label>
+      Custo por jogo (R$) — opcional (combustível, taxa, etc.)
+      <input id="custoPorJogo" type="number" step="0.01" min="0" value="0" />
+    </label>
 
-        if (!Number.isFinite(params.metaMensal) || !Number.isFinite(params.valorPorJogo)) {
-          throw new Error("Preencha pelo menos a Meta mensal e o Valor por jogo.");
+    <label>
+      Semanas no mês — opcional
+      <input
+        id="semanasNoMes"
+        type="number"
+        step="0.001"
+        min="1"
+        value="4.345"
+      />
+    </label>
+
+    <label>
+      Dias trabalhados por semana — opcional
+      <input
+        id="diasPorSemana"
+        type="number"
+        step="1"
+        min="1"
+        max="7"
+        value="6"
+      />
+    </label>
+    <button id="btn">Calcular</button>
+
+    <div id="msg" class="error"></div>
+
+    <div id="out" class="box" style="display: none"></div>
+
+    <script>
+      function moedaBR(valor) {
+        return valor.toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
+
+      function calcular({
+        metaMensal,
+        valorPorJogo,
+        custosFixos,
+        custoPorJogo,
+        semanasNoMes,
+        diasPorSemana,
+      }) {
+        const lucroPorJogo = valorPorJogo - custoPorJogo;
+
+        if (
+          metaMensal < 0 ||
+          valorPorJogo < 0 ||
+          custosFixos < 0 ||
+          custoPorJogo < 0
+        ) {
+          throw new Error("Nenhum valor pode ser negativo.");
         }
+        if (lucroPorJogo <= 0) {
+          throw new Error(
+            "O lucro por jogo precisa ser maior que zero (valor por jogo > custo por jogo).",
+          );
+        }
+        if (semanasNoMes <= 0) {
+          throw new Error("Semanas no mês precisa ser maior que zero.");
+        }
+        if (diasPorSemana <= 0 || diasPorSemana > 7) {
+          throw new Error("Dias por semana precisa estar entre 1 e 7.");
+        }
+        // Jogos necessários para atingir a meta considerando custos fixos
+        const jogosNecessarios = Math.ceil(
+          (metaMensal + custosFixos) / lucroPorJogo,
+        );
 
-        const r = calcular(params);
+        // Médias
+        const mediaPorSemana = jogosNecessarios / semanasNoMes;
+        const mediaPorDia = mediaPorSemana / diasPorSemana;
 
-        out.innerHTML = `
+        // Checagens extras (informativas)
+        const receitaBruta = jogosNecessarios * valorPorJogo;
+        const custoVariavel = jogosNecessarios * custoPorJogo;
+        const receitaLiquidaEstimada =
+          receitaBruta - custoVariavel - custosFixos;
+
+        return {
+          lucroPorJogo,
+          jogosNecessarios,
+          mediaPorSemana,
+          mediaPorDia,
+          receitaBruta,
+          custoVariavel,
+          receitaLiquidaEstimada,
+        };
+      }
+
+      document.getElementById("btn").addEventListener("click", () => {
+        const msg = document.getElementById("msg");
+        const out = document.getElementById("out");
+        msg.textContent = "";
+        out.style.display = "none";
+        try {
+          const params = {
+            metaMensal: Number(document.getElementById("meta").value),
+            valorPorJogo: Number(document.getElementById("valorPorJogo").value),
+            custosFixos: Number(
+              document.getElementById("custosFixos").value || 0,
+            ),
+            custoPorJogo: Number(
+              document.getElementById("custoPorJogo").value || 0,
+            ),
+            semanasNoMes: Number(
+              document.getElementById("semanasNoMes").value || 4.345,
+            ),
+            diasPorSemana: Number(
+              document.getElementById("diasPorSemana").value || 6,
+            ),
+          };
+
+          if (
+            !Number.isFinite(params.metaMensal) ||
+            !Number.isFinite(params.valorPorJogo)
+          ) {
+            throw new Error(
+              "Preencha pelo menos a Meta mensal e o Valor por jogo.",
+            );
+          }
+
+          const r = calcular(params);
+
+          out.innerHTML = `
           <div><b>Lucro por jogo:</b> ${moedaBR(r.lucroPorJogo)}</div>
           <div><b>Jogos necessários no mês:</b> ${r.jogosNecessarios}</div>
           <hr/>
@@ -129,11 +213,11 @@
           <div><b>Custos fixos:</b> ${moedaBR(Number(params.custosFixos))}</div>
           <div><b>Receita líquida estimada:</b> ${moedaBR(r.receitaLiquidaEstimada)}</div>
         `;
-        out.style.display = "block";
-      } catch (e) {
-        msg.textContent = e.message || String(e);
-      }
-    });
-  </script>
-</body>
+          out.style.display = "block";
+        } catch (e) {
+          msg.textContent = e.message || String(e);
+        }
+      });
+    </script>
+  </body>
 </html>
