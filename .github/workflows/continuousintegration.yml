@@ -18,12 +18,10 @@ jobs:
 
       - name: Lint HTML, CSS, JS e Java
         uses: super-linter/super-linter@v8.5.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_ALL_CODEBASE: false
-          VALIDATE_HTML: true
-          VALIDATE_CSS: true
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_JAVA: true
-          VALIDATE_PYTHON_PYLINT: false
-
+        with:
+          default_workflow_language: 'HTML'
+          disable_gitignore: true
+          html_linters: 'htmlhint'
+          css_linters: 'stylelint'
+          js_linters: 'eslint'
+          java_linters: 'checkstyle'
