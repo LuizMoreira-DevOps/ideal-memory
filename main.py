@@ -1,16 +1,15 @@
 from fastapi import FastAPI
+import random
 
 app = FastAPI()
 
 
+
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def read_root():
+    return {"Hello": "World"}
 
-@app.get("/1")
-async def get_item():
-    return {"message": "Teste 1"}
 
-@app.get("/2")
-async def get_item():
-    return {"message": "Teste 2"}
+@app.get("/random")
+async def number_random():
+    return {"random": True, "num_aleatorio": random.randint(1, 100)}
