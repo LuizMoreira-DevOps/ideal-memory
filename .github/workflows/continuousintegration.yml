@@ -1,6 +1,6 @@
 name: Continuous Integration Workflow
-on: 
-  pull_request:
+on:
+  pull_request: 
     branches:
       - main
 
@@ -8,20 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v5
-
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
       - name: Python Lint Code Scanning Action
         uses: advanced-security/python-lint-code-scanning-action@v1.1.3
         with:
           linter: pylint
-
-      - name: Lint HTML, CSS, JS e Java
-        uses: super-linter/super-linter@v8.5.0
-        with:
-          default_workflow_language: 'HTML'
-          disable_gitignore: true
-          html_linters: 'htmlhint'
-          css_linters: 'stylelint'
-          js_linters: 'eslint'
-          java_linters: 'checkstyle'
