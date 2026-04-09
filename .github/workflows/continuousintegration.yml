@@ -21,13 +21,11 @@ jobs:
         with:
           node-version: 24
 
-      - name: Install HTMLHint
-        run: npm install -g htmlhint
+      - name: Install linters
+        run: npm install -g htmlhint eslint
 
       - name: Validate HTML
         run: htmlhint "**/*.html"
 
-      - name: Run ESLint
-        uses: stefanoeb/eslint-action@1.0.2
-        with:
-          files: "**/*.js"
+      - name: Validate JS
+        run: eslint "**/*.js"
