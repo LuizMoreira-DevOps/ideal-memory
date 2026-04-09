@@ -1,7 +1,7 @@
 // GUIA ESLINT: https://eslint.org/docs/latest/use/configure/migration-guide
-// eslint.config.js
+// eslint.config.cjs
 
-export default [
+module.exports = [
   {
     files: ["**/*.js"],
     languageOptions: {
