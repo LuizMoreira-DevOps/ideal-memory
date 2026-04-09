@@ -1,18 +1,22 @@
 // GUIA ESLINT: https://eslint.org/docs/latest/use/configure/migration-guide
 // eslint.config.js
 
-// import { defineConfig } from "eslint/config";
-// import jsdoc from "eslint-plugin-jsdoc";
-
-export default defineConfig([
-	{
-		files: ["**/*.js"],
-		plugins: {
-			jsdoc: jsdoc,
-		},
-		rules: {
-			"jsdoc/require-description": "error",
-			"jsdoc/check-values": "error",
-		},
-	},
-]);
+export default [
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      ecmaVersion: 2021,
+      sourceType: "script",
+      globals: {
+        document: "readonly",
+        window: "readonly",
+        console: "readonly",
+        alert: "readonly",
+      },
+    },
+    rules: {
+      semi: ["error", "always"],
+      "no-unused-vars": "warn",
+    },
+  },
+];
