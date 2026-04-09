@@ -22,7 +22,7 @@ jobs:
           node-version: 24
 
       - name: Install linters
-        run: npm install -g htmlhint eslint
+        run: npm install -g htmlhint eslint stylelint
 
       - name: Validate HTML
         run: htmlhint "**/*.html"
