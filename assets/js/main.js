@@ -1,0 +1,113 @@
+function moedaBR(valor) {
+    return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    });
+}
+
+function calcular({
+    metaMensal,
+    valorPorJogo,
+    custosFixos,
+    custoPorJogo,
+    semanasNoMes,
+    diasPorSemana,
+}) {
+    const lucroPorJogo = valorPorJogo - custoPorJogo;
+
+    if (
+        metaMensal < 0 ||
+        valorPorJogo < 0 ||
+        custosFixos < 0 ||
+        custoPorJogo < 0
+    ) {
+        throw new Error("Nenhum valor pode ser negativo.");
+    }
+    if (lucroPorJogo <= 0) {
+        throw new Error(
+            "O lucro por jogo precisa ser maior que zero (valor por jogo > custo por jogo).",
+        );
+    }
+    if (semanasNoMes <= 0) {
+        throw new Error("Semanas no mês precisa ser maior que zero.");
+    }
+    if (diasPorSemana <= 0 || diasPorSemana > 7) {
+        throw new Error("Dias por semana precisa estar entre 1 e 7.");
+    }
+    // Jogos necessários para atingir a meta considerando custos fixos
+    const jogosNecessarios = Math.ceil(
+        (metaMensal + custosFixos) / lucroPorJogo,
+    );
+
+    // Médias
+    const mediaPorSemana = jogosNecessarios / semanasNoMes;
+    const mediaPorDia = mediaPorSemana / diasPorSemana;
+
+    // Checagens extras (informativas)
+    const receitaBruta = jogosNecessarios * valorPorJogo;
+    const custoVariavel = jogosNecessarios * custoPorJogo;
+    const receitaLiquidaEstimada =
+        receitaBruta - custoVariavel - custosFixos;
+
+    return {
+        lucroPorJogo,
+        jogosNecessarios,
+        mediaPorSemana,
+        mediaPorDia,
+        receitaBruta,
+        custoVariavel,
+        receitaLiquidaEstimada,
+    };
+}
+
+document.getElementById("btn").addEventListener("click", () => {
+    const msg = document.getElementById("msg");
+    const out = document.getElementById("out");
+    msg.textContent = "";
+    out.style.display = "none";
+    try {
+        const params = {
+            metaMensal: Number(document.getElementById("meta").value),
+            valorPorJogo: Number(document.getElementById("valorPorJogo").value),
+            custosFixos: Number(
+                document.getElementById("custosFixos").value || 0,
+            ),
+            custoPorJogo: Number(
+                document.getElementById("custoPorJogo").value || 0,
+            ),
+            semanasNoMes: Number(
+                document.getElementById("semanasNoMes").value || 4.345,
+            ),
+            diasPorSemana: Number(
+                document.getElementById("diasPorSemana").value || 6,
+            ),
+        };
+
+        if (
+            !Number.isFinite(params.metaMensal) ||
+            !Number.isFinite(params.valorPorJogo)
+        ) {
+            throw new Error(
+                "Preencha pelo menos a Meta mensal e o Valor por jogo.",
+            );
+        }
+
+        const r = calcular(params);
+
+        out.innerHTML = `
+          <div><b>Lucro por jogo:</b> ${moedaBR(r.lucroPorJogo)}</div>
+          <div><b>Jogos necessários no mês:</b> ${r.jogosNecessarios}</div>
+          <hr/>
+          <div><b>Média por semana:</b> ${r.mediaPorSemana.toFixed(2)} jogos/semana</div>
+          <div><b>Média por dia (com seus dias/semana):</b> ${r.mediaPorDia.toFixed(2)} jogos/dia</div>
+          <hr/>
+          <div><b>Receita bruta estimada:</b> ${moedaBR(r.receitaBruta)}</div>
+          <div><b>Custos variáveis estimados:</b> ${moedaBR(r.custoVariavel)}</div>
+          <div><b>Custos fixos:</b> ${moedaBR(Number(params.custosFixos))}</div>
+          <div><b>Receita líquida estimada:</b> ${moedaBR(r.receitaLiquidaEstimada)}</div>
+        `;
+        out.style.display = "block";
+    } catch (e) {
+        msg.textContent = e.message || String(e);
+    }
+});
