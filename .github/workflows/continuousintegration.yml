@@ -31,4 +31,4 @@ jobs:
         run: eslint "**/*.js"
       
       - name: Validate CSS
-        run: stylelint "**/*.css" --config stylelint.config.mjs
+        run: stylelint "**/*.css"
