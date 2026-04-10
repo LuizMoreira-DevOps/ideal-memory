@@ -1,7 +1,7 @@
 // stylelint configuration file
 // https://stylelint.io/user-guide/configure/
 
-module.exports = {
+export default {
   rules: {
     "block-no-empty": true,
     "color-no-invalid-hex": true,
