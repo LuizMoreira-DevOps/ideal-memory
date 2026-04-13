@@ -1,18 +1,17 @@
 <!doctype html>
 <html lang="pt-br">
 
-<script>
-  document.documentElement.classList.add('js');
-</script>
-
-<link rel="stylesheet" href="assets/css/style.css" />"
-<script defer src="assets/js/main.js"></script>
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Calculadora de Jogos (Meta Mensal)</title>
 
+  <script>
+    document.documentElement.classList.add('js');
+  </script>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <script defer src="/js/main.js"></script>
 </head>
 
 <body>
@@ -48,13 +47,11 @@
     Dias trabalhados por semana — opcional
     <input id="diasPorSemana" type="number" step="1" min="1" max="7" value="6" />
   </label>
+
   <button id="btn">Calcular</button>
 
   <div id="msg" class="error"></div>
-
   <div id="out" class="box" style="display: none"></div>
-
-
 </body>
 
 </html>
