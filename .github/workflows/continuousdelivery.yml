@@ -30,6 +30,8 @@ jobs:
             **/*.mjs
             **/*.cjs
             **/*.md
+            **/*.txt
+            **/*.Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
