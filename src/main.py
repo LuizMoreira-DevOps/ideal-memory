@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles # Importação do StaticFiles para s
 app = FastAPI() # Criação da instância do FastAPI para a aplicação web
 
 # Montagem do diretório "assets" para servir arquivos estáticos, como HTML, CSS e JavaScript
-app.mount("/", StaticFiles(directory="assets", html=True), name="assets")
+app.mount("/", StaticFiles(directory="src/assets", html=True), name="src/assets")
 
 # Modelo de dados para um estudante
 class Estudante(BaseModel):
