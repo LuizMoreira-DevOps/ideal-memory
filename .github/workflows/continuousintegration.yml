@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -63,6 +66,7 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ideal-memory:latest
 
   DiscordWebhook:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
