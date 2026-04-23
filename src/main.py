@@ -16,7 +16,7 @@ class Estudante(BaseModel):
 
 
 @app.get("/hello")
-def read_root():
+def root():
     return {"Hello": "World"}
 
 
@@ -31,7 +31,7 @@ async def create_estudante(estudante: Estudante):
 
 # Rota para atualizar um estudante
 @app.put("/estudantes/update/{id_estudante}")
-async def update_item(id_estudante: int):
+async def update_estudante(id_estudante: int):
     return id_estudante > 0
 
 # Rota para deletar um estudante
