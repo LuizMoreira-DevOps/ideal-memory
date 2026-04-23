@@ -1,14 +1,18 @@
 import random
-from fastapi import FastAPI # Importação do FastAPI para criar a aplicação web
-from pydantic import BaseModel # Importação do BaseModel para criar modelos de dados
-from fastapi.staticfiles import StaticFiles # Importação do StaticFiles para servir arquivos estáticos, como HTML, CSS e JavaScript
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 
-app = FastAPI() # Criação da instância do FastAPI para a aplicação web
+app = FastAPI()
 
-# Montagem do diretório "assets" para servir arquivos estáticos, como HTML, CSS e JavaScript
-app.mount("/", StaticFiles(directory="src/assets", html=True), name="src/assets")
+BASE_DIR = Path(__file__).resolve().parent
+ASSETS_DIR = BASE_DIR / "assets"
 
-# Modelo de dados para um estudante
+if ASSETS_DIR.exists():
+    app.mount("/", StaticFiles(directory=ASSETS_DIR, html=True), name="assets")
+
+
 class Estudante(BaseModel):
     nome: str
     curso: str
@@ -17,24 +21,27 @@ class Estudante(BaseModel):
 
 @app.get("/hello")
 def root():
-    return {"Hello": "World"}
+    return {"message": "Hello World"} 
 
 
 @app.get("/random")
 async def number_random():
-    return {"random": True, "num_aleatorio": random.randint(1, 100)}
+    return {
+        "teste": True, 
+        "num_aleatorio": random.randint(1, 100)
+    }
 
-# Rota para criar um estudante
+
 @app.post("/estudantes/cadastro")
 async def create_estudante(estudante: Estudante):
     return estudante
 
-# Rota para atualizar um estudante
+
 @app.put("/estudantes/update/{id_estudante}")
 async def update_estudante(id_estudante: int):
     return id_estudante > 0
 
-# Rota para deletar um estudante
+
 @app.delete("/estudantes/delete/{id_estudante}")
 async def delete_estudante(id_estudante: int):
     return id_estudante > 0
